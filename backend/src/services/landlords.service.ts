@@ -1,14 +1,13 @@
 import {adminSupabase, supabase} from "../config/supabase";
 import {AppError} from "../middleware/error.middleware";
 import {CreateLandlordPayload, UpdateLandlordPayload, Landlord} from "../types/landlord.types";
-
-const PUBLIC_LANDLORD_FIELDS = "id, email, name, createdAt" as const;
+import {LANDLORD_FIELDS} from "../constants/landlord.fields";
 
 export class LandlordService {
     async getById(id: string): Promise<Landlord> {
         const {data, error} = await adminSupabase
             .from("landlords")
-            .select(PUBLIC_LANDLORD_FIELDS)
+            .select(LANDLORD_FIELDS)
             .eq("id", id)
             .single();
 
@@ -25,7 +24,7 @@ export class LandlordService {
         const {data, error} = await adminSupabase
             .from("landlords")
             .insert(landlordData)
-            .select(PUBLIC_LANDLORD_FIELDS)
+            .select(LANDLORD_FIELDS)
             .single();
 
         if (error) {
@@ -42,7 +41,7 @@ export class LandlordService {
             .from("landlords")
             .update(landlordData)
             .eq("id", id)
-            .select(PUBLIC_LANDLORD_FIELDS)
+            .select(LANDLORD_FIELDS)
             .single();
 
         if (error) throw error;

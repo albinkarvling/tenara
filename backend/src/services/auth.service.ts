@@ -1,7 +1,7 @@
 import {supabase, adminSupabase} from "../config/supabase";
 import {AppError} from "../middleware/error.middleware";
 import {CreateLandlordPayload, SignUpPayload, Landlord} from "../types/landlord.types";
-import {LandlordService} from "./landlord.service";
+import {LandlordService} from "./landlords.service";
 
 export class AuthService {
     private landlordService: LandlordService;

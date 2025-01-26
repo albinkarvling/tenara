@@ -1,8 +1,8 @@
 import {Request, Response} from "express";
-import {LandlordService} from "../services/landlord.service";
+import {LandlordService} from "../services/landlords.service";
 import {AuthService} from "../services/auth.service";
 import {AppError} from "../middleware/error.middleware";
-import {createLandlordSchema} from "../schemas/landlord.schema";
+import {createLandlordSchema} from "../schemas/landlords.schema";
 import {AuthUtils} from "../utils/auth.utils";
 
 export class LandlordController {
