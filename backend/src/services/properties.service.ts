@@ -11,13 +11,13 @@ export class PropertiesService {
 
         if (error) throw new AppError(error.message, 500);
         if (!data) return [];
-        
-        return data?.map(property => {
+
+        return data?.map((property) => {
             const {tenant_registry_records, ...rest} = property;
-            return{
+            return {
                 ...rest,
                 tenantCount: tenant_registry_records?.[0]?.count ?? 0,
-            }
+            };
         });
     }
 
