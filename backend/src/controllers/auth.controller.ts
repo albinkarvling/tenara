@@ -3,6 +3,7 @@ import {AuthService} from "../services/auth.service";
 import {AppError} from "../middleware/error.middleware";
 import {signInSchema} from "../schemas/auth.schema";
 import {AuthUtils} from "../utils/auth.utils";
+
 export class AuthController {
     private authService: AuthService;
 
@@ -17,16 +18,16 @@ export class AuthController {
         }
 
         const {email, password} = result.data;
-        const {user, session} = await this.authService.signIn(email, password);
+        const {tenant, session} = await this.authService.signIn(email, password);
 
         AuthUtils.setCookie(res, session.access_token);
 
-        return res.json(user);
+        return res.json(tenant);
     }
 
     async signOut(req: Request, res: Response) {
         await this.authService.signOut();
         AuthUtils.clearCookie(res);
-        return res.status(204);
+        return res.sendStatus(204);
     }
 }

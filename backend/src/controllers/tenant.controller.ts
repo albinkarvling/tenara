@@ -1,16 +1,17 @@
 import {Request, Response} from "express";
-import {UserService} from "../services/user.service";
+import {TenantService} from "../services/tenant.service";
 import {AuthService} from "../services/auth.service";
 import {AppError} from "../middleware/error.middleware";
-import {createUserSchema} from "../schemas/user.schema";
+import {createTenantSchema} from "../schemas/tenant.schema";
+import {AuthUtils} from "../utils/auth.utils";
 
-export class UserController {
+export class TenantController {
     private authService: AuthService;
-    private userService: UserService;
+    private tenantService: TenantService;
 
     constructor() {
         this.authService = new AuthService();
-        this.userService = new UserService();
+        this.tenantService = new TenantService();
     }
 
     async getAll(req: Request, res: Response) {
@@ -18,8 +19,8 @@ export class UserController {
     }
 
     async getMe(req: Request, res: Response) {
-        const user = await this.userService.getById(res.locals.userId);
-        return res.json(user);
+        const tenant = await this.tenantService.getById(res.locals.userId);
+        return res.json(tenant);
     }
 
     async getById(req: Request, res: Response) {
@@ -27,22 +28,17 @@ export class UserController {
     }
 
     async create(req: Request, res: Response) {
-        const result = createUserSchema.safeParse(req.body);
+        const result = createTenantSchema.safeParse(req.body);
         
         if (!result.success) {
             throw new AppError(result.error.errors[0].message, 400);
         }
 
-        const {accessToken, user} = await this.authService.signUp(result.data);
+        const {accessToken, tenant} = await this.authService.signUp(result.data);
 
-        res.cookie("accessToken", accessToken, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
-            maxAge: 60 * 60 * 24 * 30, // 30 days
-        });
+        AuthUtils.setCookie(res, accessToken);
 
-        return res.status(201).json(user);
+        return res.status(201).json(tenant);
     }
 
     async update(req: Request, res: Response) {
@@ -52,4 +48,4 @@ export class UserController {
     async delete(req: Request, res: Response) {
         // implementation
     }
-}
+} 

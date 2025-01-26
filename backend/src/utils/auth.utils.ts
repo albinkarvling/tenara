@@ -1,8 +1,8 @@
 import {Response} from "express";
 
 export class AuthUtils {
-    static setCookie(res: Response, accessToken: string) {
-        res.cookie("accessToken", accessToken, {
+    static setCookie(res: Response, token: string) {
+        res.cookie("accessToken", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "strict",

@@ -1,23 +1,23 @@
 import {supabase, adminSupabase} from "../config/supabase";
 import {AppError} from "../middleware/error.middleware";
-import {CreateUserPayload, SignUpPayload, User} from "../types/user.types";
-import {UserService} from "./user.service";
+import {CreateTenantPayload, SignUpPayload, Tenant} from "../types/tenant.types";
+import {TenantService} from "./tenant.service";
 
 export class AuthService {
-    private userService: UserService;
+    private tenantService: TenantService;
 
     constructor() {
-        this.userService = new UserService();
+        this.tenantService = new TenantService();
     }
 
-    async signUp(userData: SignUpPayload): Promise<{
-        user: User;
+    async signUp(tenantData: SignUpPayload): Promise<{
+        tenant: Tenant;
         accessToken: string;
     }> {
         const {data: authData, error: authError} =
             await adminSupabase.auth.admin.createUser({
-                email: userData.email,
-                password: userData.password,
+                email: tenantData.email,
+                password: tenantData.password,
                 email_confirm: true,
                 user_metadata: {
                     email_confirmed: true,
@@ -26,32 +26,30 @@ export class AuthService {
 
         if (authError) throw new AppError(authError.message, authError.status);
         if (!authData.user) {
-            throw new AppError("Failed to create user", 500);
+            throw new AppError("Failed to create tenant", 500);
         }
 
-        const user = await this.userService.create({
+        const tenant = await this.tenantService.create({
             id: authData.user.id,
-            email: userData.email,
-            name: userData.name,
+            email: tenantData.email,
+            name: tenantData.name,
         });
 
-        const loginData = await this.signIn(userData.email, userData.password);
-        return {user, accessToken: loginData.session.access_token};
+        const loginData = await this.signIn(tenantData.email, tenantData.password);
+        return {tenant, accessToken: loginData.session.access_token};
     }
 
     async signIn(email: string, password: string) {
-        const {data: authData, error: authError} = await supabase.auth.signInWithPassword(
-            {
-                email,
-                password,
-            },
-        );
+        const {data: authData, error: authError} = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
 
         if (authError) throw new AppError(authError.message, authError.status);
 
-        const userData = await this.userService.getById(authData.user.id);
+        const tenantData = await this.tenantService.getById(authData.user.id);
         return {
-            user: userData,
+            tenant: tenantData,
             session: authData.session,
         };
     }

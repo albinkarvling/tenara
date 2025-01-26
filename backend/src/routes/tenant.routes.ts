@@ -1,10 +1,10 @@
 import {Router} from "express";
-import {UserController} from "../controllers/user.controller";
+import {TenantController} from "../controllers/tenant.controller";
 import {asyncHandler} from "../middleware/async.middleware";
 import {authMiddleware} from "../middleware/auth.middleware";
 
 const router = Router();
-const controller = new UserController();
+const controller = new TenantController();
 
 // Public routes
 router.post("/", asyncHandler(controller.create.bind(controller)));
@@ -15,4 +15,4 @@ router.get("/:id", asyncHandler(controller.getById.bind(controller)));
 router.put("/:id", asyncHandler(controller.update.bind(controller)));
 router.delete("/:id", asyncHandler(controller.delete.bind(controller)));
 
-export default router;
+export default router; 

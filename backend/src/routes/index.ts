@@ -1,11 +1,11 @@
 import {Router} from "express";
-import userRoutes from "./user.routes";
+import tenantRoutes from "./tenant.routes";
 import authRoutes from "./auth.routes";
 
 const router = Router();
 
-// Mount user routes
-router.use("/users", userRoutes);
+// Mount routes
+router.use("/tenants", tenantRoutes);
 router.use("", authRoutes);
 
 export default router;
