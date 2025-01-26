@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {UserService} from "../services/user.service";
 import {AuthService} from "../services/auth.service";
 import {AppError} from "../middleware/error.middleware";
+import {createUserSchema} from "../schemas/user.schema";
 
 export class UserController {
     private authService: AuthService;
@@ -26,17 +27,13 @@ export class UserController {
     }
 
     async create(req: Request, res: Response) {
-        const {email, name, password} = req.body;
+        const result = createUserSchema.safeParse(req.body);
+        
+        if (!result.success) {
+            throw new AppError(result.error.errors[0].message, 400);
+        }
 
-        if (!email) throw new AppError("Email is required");
-        if (!name) throw new AppError("Name is required");
-        if (!password) throw new AppError("Password is required");
-
-        const {accessToken, user} = await this.authService.signUp({
-            email,
-            password,
-            name,
-        });
+        const {accessToken, user} = await this.authService.signUp(result.data);
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
