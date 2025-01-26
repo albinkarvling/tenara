@@ -1,28 +1,28 @@
 import {Session} from "@supabase/supabase-js";
 
-export type Tenant = {
+export type Landlord = {
     id: string;
     email: string;
     name: string;
-    created_at: Date;
+    createdAt: Date;
 };
 
-export type CreateTenantPayload = {
+export type CreateLandlordPayload = {
     id: string;
     email: string;
     name: string;
 };
 
-export type SignUpPayload = Omit<CreateTenantPayload, "id"> & {
+export type SignUpPayload = Omit<CreateLandlordPayload, "id"> & {
     password: string;
 };
 
-export type UpdateTenantPayload = {
+export type UpdateLandlordPayload = {
     name?: string;
     email?: string;
 };
 
 export type AuthResponse = {
-    tenant: Tenant;
+    landlord: Landlord;
     session: Session;
 }; 

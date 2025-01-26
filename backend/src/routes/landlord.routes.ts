@@ -1,10 +1,10 @@
 import {Router} from "express";
-import {TenantController} from "../controllers/tenant.controller";
+import {LandlordController} from "../controllers/landlord.controller";
 import {asyncHandler} from "../middleware/async.middleware";
 import {authMiddleware} from "../middleware/auth.middleware";
 
 const router = Router();
-const controller = new TenantController();
+const controller = new LandlordController();
 
 // Public routes
 router.post("/", asyncHandler(controller.create.bind(controller)));

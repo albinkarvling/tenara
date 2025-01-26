@@ -1,23 +1,23 @@
 import {supabase, adminSupabase} from "../config/supabase";
 import {AppError} from "../middleware/error.middleware";
-import {CreateTenantPayload, SignUpPayload, Tenant} from "../types/tenant.types";
-import {TenantService} from "./tenant.service";
+import {CreateLandlordPayload, SignUpPayload, Landlord} from "../types/landlord.types";
+import {LandlordService} from "./landlord.service";
 
 export class AuthService {
-    private tenantService: TenantService;
+    private landlordService: LandlordService;
 
     constructor() {
-        this.tenantService = new TenantService();
+        this.landlordService = new LandlordService();
     }
 
-    async signUp(tenantData: SignUpPayload): Promise<{
-        tenant: Tenant;
+    async signUp(landlordData: SignUpPayload): Promise<{
+        landlord: Landlord;
         accessToken: string;
     }> {
         const {data: authData, error: authError} =
             await adminSupabase.auth.admin.createUser({
-                email: tenantData.email,
-                password: tenantData.password,
+                email: landlordData.email,
+                password: landlordData.password,
                 email_confirm: true,
                 user_metadata: {
                     email_confirmed: true,
@@ -26,17 +26,17 @@ export class AuthService {
 
         if (authError) throw new AppError(authError.message, authError.status);
         if (!authData.user) {
-            throw new AppError("Failed to create tenant", 500);
+            throw new AppError("Failed to create landlord", 500);
         }
 
-        const tenant = await this.tenantService.create({
+        const landlord = await this.landlordService.create({
             id: authData.user.id,
-            email: tenantData.email,
-            name: tenantData.name,
+            email: landlordData.email,
+            name: landlordData.name,
         });
 
-        const loginData = await this.signIn(tenantData.email, tenantData.password);
-        return {tenant, accessToken: loginData.session.access_token};
+        const loginData = await this.signIn(landlordData.email, landlordData.password);
+        return {landlord, accessToken: loginData.session.access_token};
     }
 
     async signIn(email: string, password: string) {
@@ -47,9 +47,9 @@ export class AuthService {
 
         if (authError) throw new AppError(authError.message, authError.status);
 
-        const tenantData = await this.tenantService.getById(authData.user.id);
+        const landlordData = await this.landlordService.getById(authData.user.id);
         return {
-            tenant: tenantData,
+            landlord: landlordData,
             session: authData.session,
         };
     }

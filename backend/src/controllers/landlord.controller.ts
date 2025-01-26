@@ -1,17 +1,17 @@
 import {Request, Response} from "express";
-import {TenantService} from "../services/tenant.service";
+import {LandlordService} from "../services/landlord.service";
 import {AuthService} from "../services/auth.service";
 import {AppError} from "../middleware/error.middleware";
-import {createTenantSchema} from "../schemas/tenant.schema";
+import {createLandlordSchema} from "../schemas/landlord.schema";
 import {AuthUtils} from "../utils/auth.utils";
 
-export class TenantController {
+export class LandlordController {
     private authService: AuthService;
-    private tenantService: TenantService;
+    private landlordService: LandlordService;
 
     constructor() {
         this.authService = new AuthService();
-        this.tenantService = new TenantService();
+        this.landlordService = new LandlordService();
     }
 
     async getAll(req: Request, res: Response) {
@@ -19,8 +19,8 @@ export class TenantController {
     }
 
     async getMe(req: Request, res: Response) {
-        const tenant = await this.tenantService.getById(res.locals.userId);
-        return res.json(tenant);
+        const landlord = await this.landlordService.getById(res.locals.userId);
+        return res.json(landlord);
     }
 
     async getById(req: Request, res: Response) {
@@ -28,17 +28,17 @@ export class TenantController {
     }
 
     async create(req: Request, res: Response) {
-        const result = createTenantSchema.safeParse(req.body);
+        const result = createLandlordSchema.safeParse(req.body);
         
         if (!result.success) {
             throw new AppError(result.error.errors[0].message, 400);
         }
 
-        const {accessToken, tenant} = await this.authService.signUp(result.data);
+        const {accessToken, landlord} = await this.authService.signUp(result.data);
 
         AuthUtils.setCookie(res, accessToken);
 
-        return res.status(201).json(tenant);
+        return res.status(201).json(landlord);
     }
 
     async update(req: Request, res: Response) {

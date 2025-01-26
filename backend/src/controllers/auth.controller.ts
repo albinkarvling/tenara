@@ -18,11 +18,11 @@ export class AuthController {
         }
 
         const {email, password} = result.data;
-        const {tenant, session} = await this.authService.signIn(email, password);
+        const {landlord, session} = await this.authService.signIn(email, password);
 
         AuthUtils.setCookie(res, session.access_token);
 
-        return res.json(tenant);
+        return res.json(landlord);
     }
 
     async signOut(req: Request, res: Response) {
