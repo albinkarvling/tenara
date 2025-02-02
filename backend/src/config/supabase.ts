@@ -8,5 +8,5 @@ if (!supabaseUrl || !supabaseKey || !supabaseServiceKey) {
     throw new Error("Missing Supabase environment variables");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 export const adminSupabase = createClient(supabaseUrl, supabaseServiceKey);
